@@ -5,27 +5,169 @@
   <title>Malla Curricular Interactiva</title>
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <style>
+    body {
+      font-family: sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 1em;
+    }
+    h2 {
+      text-align: center;
+    }
     svg {
       border: 1px solid #ccc;
+      background-color: #fff;
+      display: block;
+      margin: auto;
     }
     .node circle {
-      fill: #1f77b4;
-      cursor: pointer;
+      fill: #007acc;
+      stroke: #fff;
+      stroke-width: 2px;
     }
     .node text {
-      font: 12px sans-serif;
+      fill: #333;
+      font-size: 12px;
       pointer-events: none;
     }
     .link {
-      stroke: #999;
-      stroke-width: 2px;
+      stroke: #aaa;
+      stroke-width: 1.5px;
+      marker-end: url(#arrow);
     }
   </style>
 </head>
 <body>
-  <h2>Malla Curricular Interactiva</h2>
-  <svg width="800" height="600"></svg>
+  <h2>Malla Curricular Interactiva - Animación</h2>
+  <svg width="1200" height="800"></svg>
 
-  <script src="script.js"></script>
+  <script>
+    const data = {
+      nodes: [
+        { id: "Nivelación de Dibujo" }, { id: "Técnicas de Dibujo" }, { id: "Arte Digital" },
+        { id: "Principios de la Animación" }, { id: "Géneros y Estilos Audiovisuales" },
+        { id: "Habilidades Numéricas" }, { id: "Habilidades Básicas de Comunicación" },
+        { id: "Inglés Básico I" }, { id: "Figura Humana y Anatomía" },
+        { id: "Diseño y Modelado de Personajes y Entornos" }, { id: "Técnicas de Animación Mixta" },
+        { id: "Lenguaje y Narrativa Audiovisual" }, { id: "Habilidades del Lenguaje Matemático" },
+        { id: "Habilidades de Comunicación Efectiva" }, { id: "Inglés Básico II" },
+        { id: "Figura Humana en Movimiento y Bocetaje" }, { id: "Preproducción Visual" },
+        { id: "Animación de Personajes" }, { id: "Storyboard y Animatic" },
+        { id: "Mentalidad Emprendedora" }, { id: "Inglés Elemental I" },
+        { id: "Fundamentos de Antropología" }, { id: "Modelado 3D" },
+        { id: "Producción de Animación 2D" }, { id: "Proyectos de Animación 2D" },
+        { id: "Edición de Audio y Video" }, { id: "Ética para el Trabajo" },
+        { id: "Inglés Elemental II" }, { id: "Iluminación y Render" }, { id: "Rigging" },
+        { id: "Actuación Digital 3D" }, { id: "Actuación para Animadores" },
+        { id: "Técnicas de Animación 3D" }, { id: "Práctica Laboral" },
+        { id: "Inglés Intermedio I" }, { id: "Integración de Efectos" },
+        { id: "Actuación Digital 3D Avanzada" }, { id: "Desarrollo Actoral" },
+        { id: "Taller de Animación" }, { id: "Formulación de Proyectos de Animación" },
+        { id: "Inglés Intermedio II" }, { id: "Animación para Nuevas Tecnologías" },
+        { id: "Producción de Animación 3D" }, { id: "Proyecto de Animación" },
+        { id: "Producción y Distribución" }, { id: "Innovación de Productos y Servicios" },
+        { id: "Ética Profesional" }, { id: "Portafolio de Título" }, { id: "Práctica Profesional" }
+      ],
+      links: [
+        { source: "Nivelación de Dibujo", target: "Figura Humana y Anatomía" },
+        { source: "Figura Humana y Anatomía", target: "Figura Humana en Movimiento y Bocetaje" },
+        { source: "Técnicas de Dibujo", target: "Diseño y Modelado de Personajes y Entornos" },
+        { source: "Diseño y Modelado de Personajes y Entornos", target: "Preproducción Visual" },
+        { source: "Preproducción Visual", target: "Modelado 3D" },
+        { source: "Animación de Personajes", target: "Producción de Animación 2D" },
+        { source: "Producción de Animación 2D", target: "Proyectos de Animación 2D" },
+        { source: "Producción de Animación 2D", target: "Edición de Audio y Video" },
+        { source: "Modelado 3D", target: "Rigging" },
+        { source: "Rigging", target: "Actuación Digital 3D" },
+        { source: "Actuación Digital 3D", target: "Actuación Digital 3D Avanzada" },
+        { source: "Actuación Digital 3D Avanzada", target: "Producción de Animación 3D" },
+        { source: "Producción de Animación 3D", target: "Proyecto de Animación" },
+        { source: "Proyectos de Animación 2D", target: "Formulación de Proyectos de Animación" },
+        { source: "Formulación de Proyectos de Animación", target: "Producción y Distribución" },
+        { source: "Producción y Distribución", target: "Innovación de Productos y Servicios" },
+        { source: "Inglés Básico I", target: "Inglés Básico II" },
+        { source: "Inglés Básico II", target: "Inglés Elemental I" },
+        { source: "Inglés Elemental I", target: "Inglés Elemental II" },
+        { source: "Inglés Elemental II", target: "Inglés Intermedio I" },
+        { source: "Inglés Intermedio I", target: "Inglés Intermedio II" },
+        { source: "1° a 7° semestre aprobado", target: "Portafolio de Título" },
+        { source: "1° a 7° semestre aprobado", target: "Práctica Profesional" }
+      ]
+    };
+
+    const svg = d3.select("svg"),
+          width = +svg.attr("width"),
+          height = +svg.attr("height");
+
+    svg.append("defs").append("marker")
+      .attr("id", "arrow")
+      .attr("viewBox", "0 -5 10 10")
+      .attr("refX", 20)
+      .attr("refY", 0)
+      .attr("markerWidth", 6)
+      .attr("markerHeight", 6)
+      .attr("orient", "auto")
+      .append("path")
+      .attr("d", "M0,-5L10,0L0,5")
+      .attr("fill", "#aaa");
+
+    const simulation = d3.forceSimulation(data.nodes)
+      .force("link", d3.forceLink(data.links).id(d => d.id).distance(150))
+      .force("charge", d3.forceManyBody().strength(-400))
+      .force("center", d3.forceCenter(width / 2, height / 2));
+
+    const link = svg.append("g")
+      .attr("stroke", "#aaa")
+      .selectAll("line")
+      .data(data.links)
+      .join("line")
+      .attr("class", "link");
+
+    const node = svg.append("g")
+      .selectAll("g")
+      .data(data.nodes)
+      .join("g")
+      .attr("class", "node")
+      .call(d3.drag()
+        .on("start", dragstart)
+        .on("drag", dragged)
+        .on("end", dragend));
+
+    node.append("circle")
+      .attr("r", 10);
+
+    node.append("text")
+      .attr("dy", -15)
+      .attr("text-anchor", "middle")
+      .text(d => d.id);
+
+    simulation.on("tick", () => {
+      link
+        .attr("x1", d => d.source.x)
+        .attr("y1", d => d.source.y)
+        .attr("x2", d => d.target.x)
+        .attr("y2", d => d.target.y);
+
+      node
+        .attr("transform", d => `translate(${d.x},${d.y})`);
+    });
+
+    function dragstart(event, d) {
+      if (!event.active) simulation.alphaTarget(0.3).restart();
+      d.fx = d.x;
+      d.fy = d.y;
+    }
+
+    function dragged(event, d) {
+      d.fx = event.x;
+      d.fy = event.y;
+    }
+
+    function dragend(event, d) {
+      if (!event.active) simulation.alphaTarget(0);
+      d.fx = null;
+      d.fy = null;
+    }
+  </script>
 </body>
 </html>
