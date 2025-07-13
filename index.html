@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Malla Curricular Interactiva</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    svg {
+      border: 1px solid #ccc;
+    }
+    .node circle {
+      fill: #1f77b4;
+      cursor: pointer;
+    }
+    .node text {
+      font: 12px sans-serif;
+      pointer-events: none;
+    }
+    .link {
+      stroke: #999;
+      stroke-width: 2px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Malla Curricular Interactiva</h2>
+  <svg width="800" height="600"></svg>
+
+  <script src="script.js"></script>
+</body>
+</html>
